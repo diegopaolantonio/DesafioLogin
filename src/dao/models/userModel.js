@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userLevel: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+  },
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

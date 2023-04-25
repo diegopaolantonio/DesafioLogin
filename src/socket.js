@@ -55,6 +55,11 @@ socket.connect = function (httpServer) {
       messages = await messageManager.getMessages();
       io.emit("printMessages", messages);
     });
+
+    socket.on("logged", async () => {
+      products = await productManager.getProducts();
+      io.emit("printProducts", products);
+    });
   });
 };
 

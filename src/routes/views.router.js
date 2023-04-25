@@ -25,8 +25,10 @@ router.get("/", checkLogin, (req, res) => {
 });
 
 // Llamado a la vista de products con querys con Handlebars
-router.get("/products", async (req, res) => {
+router.get("/products", checkLogin, async (req, res) => {
   const { limit, page, query, sort } = req.query;
+
+  const { name, email, age, userLevel } = req.session.user
 
   const products = await productManager.getProducts(limit, page, query, sort);
 
@@ -82,6 +84,10 @@ router.get("/products", async (req, res) => {
   }
 
   res.render("products", {
+    name: name,
+    email: email,
+    age: age,
+    userLevel: userLevel,
     productsArray: productsArray,
     totalPages: totalPages,
     prevPage: prevPage,
@@ -95,7 +101,7 @@ router.get("/products", async (req, res) => {
 });
 
 // Llamado a la vista de detalles del product
-router.get("/product/Detail/:pid", async (req, res) => {
+router.get("/product/Detail/:pid", checkLogin, async (req, res) => {
   const pid = req.params.pid;
   let product2;
   const product = await productManager.getProductById(pid);
@@ -129,7 +135,7 @@ router.get("/product/Detail/:pid", async (req, res) => {
 });
 
 // Llamado a la vista de los productos del cart
-router.get("/cart/:cid", async (req, res) => {
+router.get("/cart/:cid", checkLogin, async (req, res) => {
   const cid = req.params.cid;
   let cartId;
   // let products = [];
@@ -173,7 +179,7 @@ router.get("/cart/:cid", async (req, res) => {
 });
 
 // Llamado para agregar el product con id pid en el cart con id cid, con el boton en /products y /products/detail/pid
-router.get("/:cid/product/:pid", async (req, res) => {
+router.get("/:cid/product/:pid", checkLogin, async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
 
@@ -188,7 +194,7 @@ router.get("/:cid/product/:pid", async (req, res) => {
 });
 
 // llamado a la vista de messages
-router.get("/messages", async (req, res) => {
+router.get("/messages", checkLogin, async (req, res) => {
   const messages = await messageManager.getMessages();
   let messageArray = [];
   messages.forEach((element, index) => {

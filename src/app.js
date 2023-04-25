@@ -26,7 +26,7 @@ app.use(
   session({
     store: MongoStore.create({
       mongoUrl: `mongodb+srv://${dbUser}:${dbPassword}@ecommerce.o3a2yau.mongodb.net/${dbName}?retryWrites=true&w=majority`,
-      ttl: 60,
+      ttl: 600,
     }),
     resave: true,
     saveUninitialized: false,

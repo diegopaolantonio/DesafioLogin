@@ -1,11 +1,13 @@
+import express from "express";
 import { Router } from "express";
 import { userModel } from "../dao/models/userModel.js";
 
+const app = express();
 const router = Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { first_name, last_name, email, age, password } = req.body;
+    const { first_name, last_name, email, age, userLevel, password } = req.body;
 
     const userExists = await userModel.findOne({ email });
     if (userExists) {
@@ -19,6 +21,7 @@ router.post("/register", async (req, res) => {
       last_name,
       email,
       age,
+      userLevel,
       password,
     };
     await userModel.create(user);
@@ -43,12 +46,37 @@ router.post("/login", async (req, res) => {
       name: `${user.first_name} ${user.last_name}`,
       email: user.email,
       age: user.age,
+      userLevel: user.userLevel,
     };
+    // req.session.save(function (err) {
+    //   if (err) next(err);
 
+    //   req.session.regenerate(function (err) {
+    //     if (err) next(err);
+    //     res.redirect("/");
+    //   });
+    // });
     res.send({
       status: "sucess",
       message: "Logged In",
       payload: req.session.user,
+    }).redirect("http://localhost8080/products")
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/logout", async (req, res) => {
+  try {
+    req.session.user = null;
+    req.session.save(function (err) {
+      if (err) next(err);
+
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+        res.redirect("/");
+      });
     });
   } catch (error) {
     console.log(error);
