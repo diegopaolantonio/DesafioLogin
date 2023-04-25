@@ -42,16 +42,16 @@ app.set("view engine", "handlebars");
 // Conexion a Database
 database.connect();
 
-// Ruteos
-app.use("/api/sessions", sessionsRouter);
-app.use("/api/messages", messagesRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
-app.use("/", viewsRouter);
-
 // Servidor
 const httpServer = app.listen(8080, () => {
   console.log(`Server on port 8080`);
 });
 
 socket.connect(httpServer);
+
+// Ruteos
+app.use("/api/sessions", sessionsRouter);
+app.use("/api/messages", messagesRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter);
+app.use("/", viewsRouter);

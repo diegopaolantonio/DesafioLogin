@@ -21,9 +21,7 @@ form.addEventListener("submit", async (e) => {
   });
 
   let result = await response.json();
-  console.log(result);
 } else {
-  console.log("Diego");
-  console.log("User Level not valid");
+  return ("User Level not valid");
 }
 });

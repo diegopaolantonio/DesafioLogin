@@ -1,15 +1,15 @@
 <br />
-<h1>Segunda preentrega Backend</h1>
-<h2>Productos:</h2>
-<div>
-  <br />
-  <p>Cart Id: {{cartId}}</p>
-</div>
+<h1>Usuario:</h1>
+<p>Nombre: {{name}}</p>
+<p>Edad: {{age}}</p>
+<p>email: {{email}}</p>
+<p>Rol: {{userLevel}}</p>
+<a href="/api/sessions/logout"><button>Logout</button></a>
+<h2>Cart Id: {{cartId}}</h2>
 <div>
   <h2>Producto:</h2>
   {{#each cartProducts}}
     <div>
-      <br />
       <p>Product Id: {{this._id}}</p>
       <p>Title: {{this.title}}</p>
       <p>Description: {{this.description}}</p>
@@ -20,6 +20,7 @@
       <p>Status: {{this.status}}</p>
       <p>Thumbnail: {{this.thumbnail}}</p>
       <p>Quantity: {{this.quantity}}</p>
+      <br />
     </div>
   {{/each}}
 </div>

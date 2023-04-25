@@ -2,7 +2,7 @@ import { Router } from "express";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import ProductManager from "../dao/dbManagers/ProductManager.js";
 import MessageManager from "../dao/dbManagers/MessageManager.js";
-import { checkLogged, checkLogin } from "../middlewares/auth.js";
+import { checkLogged, checkLogin, checkAdmin } from "../middlewares/auth.js";
 
 const router = Router();
 const cartManager = new CartManager();
@@ -10,7 +10,7 @@ const productManager = new ProductManager();
 const messageManager = new MessageManager();
 
 // Llamado a la vista de login
-router.get("/login", checkLogged, (req, res) => {
+router.get("/login", checkAdmin, (req, res) => {
   res.render("login");
 });
 
@@ -101,7 +101,7 @@ router.get("/products", checkLogin, async (req, res) => {
 });
 
 // Llamado a la vista de detalles del product
-router.get("/product/Detail/:pid", checkLogin, async (req, res) => {
+router.get("/product/Detail/:pid", async (req, res) => {
   const pid = req.params.pid;
   let product2;
   const product = await productManager.getProductById(pid);
@@ -135,10 +135,11 @@ router.get("/product/Detail/:pid", checkLogin, async (req, res) => {
 });
 
 // Llamado a la vista de los productos del cart
-router.get("/cart/:cid", checkLogin, async (req, res) => {
+router.get("/cart/:cid", async (req, res) => {
   const cid = req.params.cid;
   let cartId;
-  // let products = [];
+  const { name, email, age, userLevel } = req.session.user
+
   let cartProducts = [];
   const cart = await cartManager.getCartById(cid);
   cart.forEach((element) => {
@@ -172,6 +173,10 @@ router.get("/cart/:cid", checkLogin, async (req, res) => {
     });
   });
   res.render("cart", {
+    name: name,
+    email: email,
+    age: age,
+    userLevel: userLevel,
     cartId: cartId,
     cartProducts: cartProducts,
     cartId: cartId,
@@ -179,7 +184,7 @@ router.get("/cart/:cid", checkLogin, async (req, res) => {
 });
 
 // Llamado para agregar el product con id pid en el cart con id cid, con el boton en /products y /products/detail/pid
-router.get("/:cid/product/:pid", checkLogin, async (req, res) => {
+router.get("/:cid/product/:pid", async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
 
@@ -194,7 +199,7 @@ router.get("/:cid/product/:pid", checkLogin, async (req, res) => {
 });
 
 // llamado a la vista de messages
-router.get("/messages", checkLogin, async (req, res) => {
+router.get("/messages", async (req, res) => {
   const messages = await messageManager.getMessages();
   let messageArray = [];
   messages.forEach((element, index) => {

@@ -1,8 +1,6 @@
-import express from "express";
 import { Router } from "express";
 import { userModel } from "../dao/models/userModel.js";
 
-const app = express();
 const router = Router();
 
 router.post("/register", async (req, res) => {
@@ -35,33 +33,24 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email, password });
-
     if (!user) {
       return res
         .status(400)
         .send({ status: "error", error: "Incorrect credentials" });
+    } else {
+      req.session.user = {
+        name: `${user.first_name} ${user.last_name}`,
+        email: user.email,
+        age: user.age,
+        userLevel: user.userLevel,
+      };
+
+      res.send({
+          status: "sucess",
+          message: "Logged In",
+          payload: req.session.user,
+        })
     }
-
-    req.session.user = {
-      name: `${user.first_name} ${user.last_name}`,
-      email: user.email,
-      age: user.age,
-      userLevel: user.userLevel,
-    };
-    // req.session.save(function (err) {
-    //   if (err) next(err);
-
-    //   req.session.regenerate(function (err) {
-    //     if (err) next(err);
-    //     res.redirect("/");
-    //   });
-    // });
-    res.send({
-      status: "sucess",
-      message: "Logged In",
-      payload: req.session.user,
-    }).redirect("http://localhost8080/products")
-
   } catch (error) {
     console.log(error);
   }
