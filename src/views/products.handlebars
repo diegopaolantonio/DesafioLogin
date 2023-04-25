@@ -1,0 +1,35 @@
+<br />
+<h1>Segunda preentrega Backend</h1>
+<h2>Productos:</h2>
+<p>Cart id: 6434c6d595f9e8d1043cb867</p>
+{{#each productsArray}}
+  <div>
+    <br />
+    <p>Id: {{this._id}}</p>
+    <p>Title: {{this.title}}</p>
+    <p>Category: {{this.category}}</p>
+    <p>Status: {{this.status}}</p>
+    <br />
+    <a href="/6434c6d595f9e8d1043cb867/product/{{this._id}}"><button>Agregar a
+        carrito</button></a>
+    <br />
+    <br />
+    <a href="/product/detail/{{this._id}}"><button>Detalle</button></a>
+    <br />
+  </div>
+{{/each}}
+
+<br />
+<div>
+  <p>prevPage: {{prevPage}}</p>
+  <p>page: {{actualPage}} / {{totalPages}}</p>
+  <p>nextPage: {{nextPage}}</p>
+
+  {{#if hasPrevPage}}
+    <a href="{{prevLink}}"><button>Prev page</button></a>
+  {{/if}}
+
+  {{#if hasNextPage}}
+    <a href="{{nextLink}}"><button>Next page</button></a>
+  {{/if}}
+</div>
