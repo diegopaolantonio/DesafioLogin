@@ -2,43 +2,26 @@ import { Router } from "express";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import ProductManager from "../dao/dbManagers/ProductManager.js";
 import MessageManager from "../dao/dbManagers/MessageManager.js";
+import { checkLogged, checkLogin } from "../middlewares/auth.js";
 
 const router = Router();
 const cartManager = new CartManager();
 const productManager = new ProductManager();
 const messageManager = new MessageManager();
 
-// Llamado a la vista general de products con Handlebars
-router.get("/", async (req, res) => {
-  const products = await productManager.getProducts();
-  let productsArray = [];
-  products.docs.forEach((element, index) => {
-    const _id = element._id;
-    const title = element.title;
-    const description = element.description;
-    const price = element.price;
-    const code = element.code;
-    const stock = element.stock;
-    const category = element.category;
-    const status = element.status;
-    const thumbnail = element.thumbnail;
+// Llamado a la vista de login
+router.get("/login", checkLogged, (req, res) => {
+  res.render("login");
+});
 
-    productsArray[index] = {
-      _id,
-      title,
-      description,
-      price,
-      code,
-      stock,
-      category,
-      status,
-      thumbnail,
-    };
-  });
+// Llamado a la vista para un nuevo registro
+router.get("/register", checkLogged, (req, res) => {
+  res.render("register");
+});
 
-  res.render("index", {
-    productsArray: productsArray,
-  });
+// Llamado a la vista para hacer login que remplaza la vista que originalmente tenia con products
+router.get("/", checkLogin, (req, res) => {
+  res.render("profile", { user: req.session.user });
 });
 
 // Llamado a la vista de products con querys con Handlebars
