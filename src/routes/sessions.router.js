@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email, password });
@@ -44,13 +44,14 @@ router.post("/login", async (req, res) => {
         age: user.age,
         userLevel: user.userLevel,
       };
-
+      
       res.send({
           status: "sucess",
           message: "Logged In",
-          payload: req.session.user,
-        })
-    }
+      payload: req.session.user
+      });
+      
+      }
   } catch (error) {
     console.log(error);
   }
