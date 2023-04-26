@@ -7,10 +7,6 @@ form.addEventListener("submit", async (e) => {
   const obj = {};
 
   data.forEach((value, key) => (obj[key] = value));
-
-  if (!obj.userLevel) obj.userLevel = "user";
-
-  if (obj.userLevel === "admin" || obj.userLevel === "user") {
     
   let response = await fetch("/api/sessions/register", {
     method: "POST",
@@ -21,7 +17,5 @@ form.addEventListener("submit", async (e) => {
   });
 
   let result = await response.json();
-} else {
-  return ("User Level not valid");
-}
+
 });

@@ -5,7 +5,7 @@ const router = Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { first_name, last_name, email, age, userLevel, password } = req.body;
+    const { first_name, last_name, email, age, password } = req.body;
 
     const userExists = await userModel.findOne({ email });
     if (userExists) {
@@ -19,7 +19,6 @@ router.post("/register", async (req, res) => {
       last_name,
       email,
       age,
-      userLevel,
       password,
     };
     await userModel.create(user);
@@ -30,28 +29,48 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res, next) => {
+  let rol = null;
+  let first_name = "";
+  let last_name = "";
+  let age;
+  let email = "";
+  let password = "";
+  let user = { first_name, last_name, age, email, password };
   try {
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email, password });
-    if (!user) {
+    console.log(email);
+    console.log(password);
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+      console.log("object");
+      rol = "admin";
+    }
+    user = await userModel.findOne({ email, password });
+    if (user) {
+      rol = "user";
+      console.log(user);
+      first_name = user.first_name;
+      last_name = user.last_name;
+      age = user.age;
+    }
+
+    if (!rol) {
       return res
         .status(400)
         .send({ status: "error", error: "Incorrect credentials" });
     } else {
       req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age,
-        userLevel: user.userLevel,
+        name: `${first_name} ${last_name}`,
+        email: email,
+        age: age,
+        rol: rol,
       };
-      
+
       res.send({
-          status: "sucess",
-          message: "Logged In",
-      payload: req.session.user
+        status: "sucess",
+        message: "Logged In",
+        payload: req.session.user,
       });
-      
-      }
+    }
   } catch (error) {
     console.log(error);
   }

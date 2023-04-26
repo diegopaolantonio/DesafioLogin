@@ -2,7 +2,7 @@ import { Router } from "express";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import ProductManager from "../dao/dbManagers/ProductManager.js";
 import MessageManager from "../dao/dbManagers/MessageManager.js";
-import { checkLogged, checkLogin, checkRol } from "../middlewares/auth.js";
+import { checkLogged, checkLogin } from "../middlewares/auth.js";
 
 const router = Router();
 const cartManager = new CartManager();
@@ -10,7 +10,7 @@ const productManager = new ProductManager();
 const messageManager = new MessageManager();
 
 // Llamado a la vista de login
-router.get("/login", checkRol, (req, res) => {
+router.get("/login", checkLogged, (req, res) => {
   res.render("login");
 });
 
@@ -28,7 +28,7 @@ router.get("/", checkLogin, (req, res) => {
 router.get("/products", checkLogin, async (req, res) => {
   const { limit, page, query, sort } = req.query;
 
-  const { name, email, age, userLevel } = req.session.user
+  const { name, email, age, rol } = req.session.user
 
   const products = await productManager.getProducts(limit, page, query, sort);
 
@@ -87,7 +87,7 @@ router.get("/products", checkLogin, async (req, res) => {
     name: name,
     email: email,
     age: age,
-    userLevel: userLevel,
+    rol: rol,
     productsArray: productsArray,
     totalPages: totalPages,
     prevPage: prevPage,
@@ -138,7 +138,7 @@ router.get("/product/Detail/:pid", checkLogin, async (req, res) => {
 router.get("/cart/:cid", checkLogin, async (req, res) => {
   const cid = req.params.cid;
   let cartId;
-  const { name, email, age, userLevel } = req.session.user
+  const { name, email, age, rol } = req.session.user
 
   let cartProducts = [];
   const cart = await cartManager.getCartById(cid);
@@ -176,7 +176,7 @@ router.get("/cart/:cid", checkLogin, async (req, res) => {
     name: name,
     email: email,
     age: age,
-    userLevel: userLevel,
+    rol: rol,
     cartId: cartId,
     cartProducts: cartProducts,
     cartId: cartId,
