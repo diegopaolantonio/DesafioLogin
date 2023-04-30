@@ -28,7 +28,7 @@ router.get("/", checkLogin, (req, res) => {
 router.get("/products", checkLogin, async (req, res) => {
   const { limit, page, query, sort } = req.query;
 
-  const { name, email, age, rol } = req.session.user
+  const { first_name, last_name, email, age, rol } = req.session.user
 
   const products = await productManager.getProducts(limit, page, query, sort);
 
@@ -82,7 +82,7 @@ router.get("/products", checkLogin, async (req, res) => {
   } else {
     nextLink = null;
   }
-
+  const name = `${first_name} ${last_name}`;
   res.render("products", {
     name: name,
     email: email,

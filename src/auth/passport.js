@@ -1,7 +1,8 @@
 import passport from "passport";
 import local from "passport-local";
-import userModel from "../dao/models/userModel.js";
+import { userModel } from "../dao/models/userModel.js";
 import { createHash, isValidPassword } from "../utils.js";
+import { ObjectId } from "mongodb";
 
 const LocalStrategy = local.Strategy;
 
@@ -12,7 +13,7 @@ const initializePassport = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
         try {
-          const { first_name, last_name, age, email } = req.body;
+          const { first_name, last_name, age, email, rol } = req.body;
 
           let user = await userModel.findOne({ email: username });
           if (user) {
@@ -26,6 +27,7 @@ const initializePassport = () => {
             age,
             email,
             password: createHash(password),
+            rol,
           };
 
           let result = await userModel.create(newUser);
@@ -40,30 +42,44 @@ const initializePassport = () => {
 
   passport.use(
     "login",
-    new LocalStrategy({ usernameField: "email" }),
-    async (username, password, done) => {
-      try {
-        if (username === "adminCoder@coder.com") {
-          if (password === "adminCod3r123") {
-            const user = {fist_name: "", last_name: "", age: 0, email: username, rol: "admin"};
-          }
-        } else {
-          const user = await userModel.findOne({ email: username });
+    new LocalStrategy(
+      { usernameField: "email" },
+      async (username, password, done) => {
+        try {
+          let user = {
+            fist_name: "",
+            last_name: "",
+            age: 0,
+            email: "",
+            rol: "",
+          };
+          if (username === "adminCoder@coder.com") {
+            if (password === "adminCod3r123") {
+              user = {
+                _id: new ObjectId(),
+                first_name: "adminCoder@coder.com",
+                last_name: "",
+                age: 0,
+                email: username,
+                rol: "admin",
+              };
+            }
+          } else {
+            user = await userModel.findOne({ email: username });
+            if (!user) {
+              return done(null, false);
+            }
 
-          if (!user) {
-            return done(null, false);
+            if (!isValidPassword(user, password)) {
+              return done(null, false);
+            }
           }
-
-          if (!isValidPassword(user, password)) {
-            return done(null, false);
-          }
-          user = {...user, rol: "user"};
+          return done(null, user);
+        } catch (error) {
+          return done(error);
         }
-        return done(null, user);
-      } catch (error) {
-        return done(error);
       }
-    }
+    )
   );
 
   passport.serializeUser((user, done) => {

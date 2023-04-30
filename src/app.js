@@ -6,12 +6,14 @@ import socket from "./socket.js";
 import database from "./db.js";
 import config from "./config.js";
 import morgan from "morgan";
+import passport from "passport";
 import sessionsRouter from "./routes/sessions.router.js";
 import messagesRouter from "./routes/messages.router.js";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
 import __dirname from "./utils.js";
+import initializePassport from "./auth/passport.js";
 
 // Inicializacion
 const app = express();
@@ -33,6 +35,9 @@ app.use(
     secret: sessionSecret,
   })
 );
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Seteo de Handlebars
 app.engine("handlebars", handlebars.engine());
