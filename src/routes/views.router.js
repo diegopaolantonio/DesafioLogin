@@ -21,6 +21,7 @@ router.get("/register", checkLogged, (req, res) => {
 
 // Llamado a la vista para hacer login que remplaza la vista que originalmente tenia con products
 router.get("/", checkLogin, (req, res) => {
+  console.log(req.session.user);
   res.render("profile", { user: req.session.user });
 });
 

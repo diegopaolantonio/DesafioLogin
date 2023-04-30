@@ -21,7 +21,7 @@ router.get("/failRegister", (req, res) => {
 router.post(
   "/login",
   passport.authenticate("login", { failureRegister: "/failLogin" }),
-  async (req, res) => {
+  async (req, res, next) => {
     if (!req.user) {
       return res.status(401).send({ status: "error", error: "Unauthorized" });
     }
@@ -40,6 +40,14 @@ router.post(
 router.get("/failLogin", (req, res) => {
   res.send({ status: "error", error: "Failed login" });
 });
+
+router.get("/github", passport.authenticate("githublogin", {scope:["user:email"]}), (req, res) => {
+});
+
+router.get("/githubcallback", passport.authenticate("githublogin", {failureRedirect: "/login"}), async (req,res) => {
+  req.session.user = req.user;
+  res.redirect("/products");
+})
 
 router.get("/logout", async (req, res) => {
   try {

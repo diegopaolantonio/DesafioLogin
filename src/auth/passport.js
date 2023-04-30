@@ -3,8 +3,12 @@ import local from "passport-local";
 import { userModel } from "../dao/models/userModel.js";
 import { createHash, isValidPassword } from "../utils.js";
 import { ObjectId } from "mongodb";
+import GitHubStrategy from "passport-github2";
+import config from "../config.js";
 
 const LocalStrategy = local.Strategy;
+
+const { clientID, clientSecret, callbackUrl } = config;
 
 const initializePassport = () => {
   passport.use(
@@ -75,6 +79,41 @@ const initializePassport = () => {
             }
           }
           return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.use(
+    "githublogin",
+    new GitHubStrategy(
+      {
+        clientID,
+        clientSecret,
+        callbackUrl,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await userModel.findOne({ email: profile._json.email });
+          if (!user) {
+            let newUser = {
+              first_name: profile._json.name,
+              last_name: "",
+              age: 0,
+              email: profile._json.email,
+              password: "",
+              rol: "user",
+            };
+
+            let result = await userModel.create(newUser);
+
+            return done(null, result);
+          }
+
+          return done (null, user);
+
         } catch (error) {
           return done(error);
         }
