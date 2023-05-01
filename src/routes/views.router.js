@@ -29,7 +29,7 @@ router.get("/", checkLogin, (req, res) => {
 router.get("/products", checkLogin, async (req, res) => {
   const { limit, page, query, sort } = req.query;
 
-  const { first_name, last_name, email, age, rol } = req.session.user
+  const { first_name, last_name, email, age, rol } = req.session.user;
 
   const products = await productManager.getProducts(limit, page, query, sort);
 
@@ -139,7 +139,7 @@ router.get("/product/Detail/:pid", checkLogin, async (req, res) => {
 router.get("/cart/:cid", checkLogin, async (req, res) => {
   const cid = req.params.cid;
   let cartId;
-  const { name, email, age, rol } = req.session.user
+  const { name, email, age, rol } = req.session.user;
 
   let cartProducts = [];
   const cart = await cartManager.getCartById(cid);

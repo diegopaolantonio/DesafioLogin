@@ -112,8 +112,7 @@ const initializePassport = () => {
             return done(null, result);
           }
 
-          return done (null, user);
-
+          return done(null, user);
         } catch (error) {
           return done(error);
         }

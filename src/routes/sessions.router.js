@@ -9,7 +9,7 @@ router.post(
   "/register",
   passport.authenticate("register", { failureRegister: "/failRegister" }),
   async (req, res) => {
-    return res.send({ status: "Sucsses", message: "User registered" });
+    return res.send({ status: "Success", message: "User registered" });
   }
 );
 
@@ -41,13 +41,20 @@ router.get("/failLogin", (req, res) => {
   res.send({ status: "error", error: "Failed login" });
 });
 
-router.get("/github", passport.authenticate("githublogin", {scope:["user:email"]}), (req, res) => {
-});
+router.get(
+  "/github",
+  passport.authenticate("githublogin", { scope: ["user:email"] }),
+  (req, res) => {}
+);
 
-router.get("/githubcallback", passport.authenticate("githublogin", {failureRedirect: "/login"}), async (req,res) => {
-  req.session.user = req.user;
-  res.redirect("/products");
-})
+router.get(
+  "/githubcallback",
+  passport.authenticate("githublogin", { failureRedirect: "/login" }),
+  async (req, res) => {
+    req.session.user = req.user;
+    res.redirect("/products");
+  }
+);
 
 router.get("/logout", async (req, res) => {
   try {
