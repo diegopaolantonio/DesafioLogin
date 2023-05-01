@@ -16,7 +16,7 @@ form.addEventListener("submit", async (e) => {
     },
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 || response.status === 500 ) {
     Swal.fire({
       icon: "error",
       title: `Email or password incorrect`,

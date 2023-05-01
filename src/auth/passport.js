@@ -8,7 +8,7 @@ import config from "../config.js";
 
 const LocalStrategy = local.Strategy;
 
-const { clientID, clientSecret, callbackUrl } = config;
+const { adminEmail, adminPassword, clientID, clientSecret, callbackUrl } = config;
 
 const initializePassport = () => {
   passport.use(
@@ -57,11 +57,11 @@ const initializePassport = () => {
             email: "",
             rol: "",
           };
-          if (username === "adminCoder@coder.com") {
-            if (password === "adminCod3r123") {
+          if (username === adminEmail) {
+            if (password === adminPassword) {
               user = {
                 _id: new ObjectId(),
-                first_name: "adminCoder@coder.com",
+                first_name: adminEmail,
                 last_name: "",
                 age: 0,
                 email: username,
