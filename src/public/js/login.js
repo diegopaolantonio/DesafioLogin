@@ -16,9 +16,31 @@ form.addEventListener("submit", async (e) => {
     },
   });
 
+  if (response.status === 401) {
+    console.log("object");
+    Swal.fire({
+      icon: "error",
+      title: `Email or password incorrect`,
+      confirmButtonText: "Ok",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        location.reload();
+      }
+    });
+  }
+
   let result = await response.json();
-  console.log(result);
 
-  location.reload();
-
+  if (result.status === "Success") {
+    Swal.fire({
+      icon: "success",
+      title: `Login Success`,
+      text: `Bienvenido ${result.payload.first_name} ${result.payload.last_name}`,
+      confirmButtonText: "Ok",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        location.reload();
+      }
+    });
+  }
 });
