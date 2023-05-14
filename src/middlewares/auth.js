@@ -1,4 +1,4 @@
-function checkLogin(req, res, next) {
+function checkSession(req, res, next) {
   if (!req.session.user) return res.redirect("/login");
   next();
 }
@@ -8,4 +8,4 @@ function checkLogged(req, res, next) {
   next();
 }
 
-export { checkLogged, checkLogin };
+export { checkLogged, checkSession };

@@ -25,12 +25,13 @@ router.post(
     if (!req.user) {
       return res.status(401).send({ status: "error", error: "Unauthorized" });
     }
-    console.log(req.user);
+
     req.session.user = {
       first_name: req.user.first_name,
       last_name: req.user.last_name,
       age: req.user.age,
       email: req.user.email,
+      cart: req.user.cart,
       rol: req.user.rol,
     };
     res.send({ status: "Success", payload: req.user });
@@ -39,6 +40,13 @@ router.post(
 
 router.get("/failLogin", (req, res) => {
   res.send({ status: "error", error: "Failed login" });
+});
+
+router.get("/current", (req, res) => {
+  if (!req.session.user)
+    res.send({ status: "No user logged" });
+
+  res.send({ status: "User logged", payload: req.session.user });
 });
 
 router.get(
