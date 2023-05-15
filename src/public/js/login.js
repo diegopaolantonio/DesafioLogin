@@ -16,7 +16,7 @@ form.addEventListener("submit", async (e) => {
     },
   });
 
-  if (response.status === 401 || response.status === 500 ) {
+  if (response.status === 401 || response.status === 500) {
     Swal.fire({
       icon: "error",
       title: `Email or password incorrect`,
@@ -34,11 +34,11 @@ form.addEventListener("submit", async (e) => {
     Swal.fire({
       icon: "success",
       title: `Login Success`,
-      text: `Bienvenido ${result.payload.first_name} ${result.payload.last_name}`,
+      text: `Bienvenido`,
       confirmButtonText: "Ok",
     }).then((result) => {
       if (result.isConfirmed) {
-        location.reload();
+        window.location.href = "/products";
       }
     });
   }

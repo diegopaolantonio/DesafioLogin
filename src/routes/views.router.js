@@ -2,7 +2,7 @@ import { Router } from "express";
 import CartManager from "../dao/dbManagers/CartManager.js";
 import ProductManager from "../dao/dbManagers/ProductManager.js";
 import MessageManager from "../dao/dbManagers/MessageManager.js";
-import { checkLogged, checkSession } from "../middlewares/auth.js";
+import passport from "passport";
 
 const router = Router();
 const cartManager = new CartManager();
@@ -10,26 +10,26 @@ const productManager = new ProductManager();
 const messageManager = new MessageManager();
 
 // Llamado a la vista de login
-router.get("/login", checkLogged, (req, res) => {
+router.get("/login", (req, res) => {
   res.render("login");
 });
 
 // Llamado a la vista para un nuevo registro
-router.get("/register", checkLogged, (req, res) => {
+router.get("/register", (req, res) => {
   res.render("register");
 });
 
 // Llamado a la vista para hacer login que remplaza la vista que originalmente tenia con products
-router.get("/", checkSession, (req, res) => {
-  console.log(req.session.user);
-  res.render("profile", { user: req.session.user });
+router.get("/", passport.authenticate("jwt", { session: false }), (req, res) => {
+  res.render("profile", { user: req.user });
 });
 
 // Llamado a la vista de products con querys con Handlebars
-router.get("/products", checkSession, async (req, res) => {
+router.get("/products", passport.authenticate("jwt", { session: false }), async (req, res) => {
+
   const { limit, page, query, sort } = req.query;
 
-  const { first_name, last_name, email, age, cart, rol } = req.session.user;
+  const { name, email, age, cart, rol } = req.user;
 
   const products = await productManager.getProducts(limit, page, query, sort);
 
@@ -83,7 +83,7 @@ router.get("/products", checkSession, async (req, res) => {
   } else {
     nextLink = null;
   }
-  const name = `${first_name} ${last_name}`;
+  // const name = `${first_name} ${last_name}`;
   res.render("products", {
     name: name,
     email: email,
@@ -103,11 +103,11 @@ router.get("/products", checkSession, async (req, res) => {
 });
 
 // Llamado a la vista de detalles del product
-router.get("/product/Detail/:pid", checkSession, async (req, res) => {
+router.get("/product/Detail/:pid", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const pid = req.params.pid;
   let product2;
   const product = await productManager.getProductById(pid);
-  const { first_name, last_name, email, age, cart, rol } = req.session.user;
+  const { name, email, age, cart, rol } = req.user;
 
   product.forEach((element) => {
     product2 = element;
@@ -124,7 +124,7 @@ router.get("/product/Detail/:pid", checkSession, async (req, res) => {
     thumbnail,
   } = product2;
 
-  const name = `${first_name} ${last_name}`;
+  // const name = `${first_name} ${last_name}`;
   res.render("detail", {
     name: name,
     email: email,
@@ -144,7 +144,7 @@ router.get("/product/Detail/:pid", checkSession, async (req, res) => {
 });
 
 // Llamado a la vista de los productos del cart
-router.get("/cart/:cid", checkSession, async (req, res) => {
+router.get("/cart/:cid", async (req, res) => {
   const cid = req.params.cid;
   let cartId;
   const { name, email, age, rol } = req.session.user;
@@ -193,7 +193,7 @@ router.get("/cart/:cid", checkSession, async (req, res) => {
 });
 
 // Llamado para agregar el product con id pid en el cart con id cid, con el boton en /products y /products/detail/pid
-router.get("/:cid/product/:pid", checkSession, async (req, res) => {
+router.get("/:cid/product/:pid", async (req, res) => {
   const cid = req.params.cid;
   const pid = req.params.pid;
 
@@ -208,7 +208,7 @@ router.get("/:cid/product/:pid", checkSession, async (req, res) => {
 });
 
 // llamado a la vista de messages
-router.get("/messages", checkSession, async (req, res) => {
+router.get("/messages", async (req, res) => {
   const messages = await messageManager.getMessages();
   let messageArray = [];
   messages.forEach((element, index) => {

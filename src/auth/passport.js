@@ -1,5 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
+import jwt from "passport-jwt";
 import { userModel } from "../dao/models/userModel.js";
 import { cartModel } from "../dao/models/cartModel.js"
 import { createHash, isValidPassword } from "../utils.js";
@@ -8,8 +9,23 @@ import GitHubStrategy from "passport-github2";
 import config from "../config.js";
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJwt = jwt.ExtractJwt;
 
-const { adminEmail, adminPassword, clientID, clientSecret, callbackUrl } = config;
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["jwtCookie"];
+  }
+  return token;
+};
+
+const { adminEmail, adminPassword, clientID, jwtSecret, callbackUrl } = config;
+
+const jwtOptions = {
+  secretOrKey: jwtSecret,
+  jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+};
 
 const initializePassport = () => {
   passport.use(
@@ -46,6 +62,17 @@ const initializePassport = () => {
         }
       }
     )
+  );
+
+  passport.use(
+    "jwt",
+    new JWTStrategy(jwtOptions, async (jwt_payload, done) => {
+      try {
+        return done(null, jwt_payload);
+      } catch (error) {
+        return done(error);
+      }
+    })
   );
 
   passport.use(
@@ -95,7 +122,7 @@ const initializePassport = () => {
     new GitHubStrategy(
       {
         clientID,
-        clientSecret,
+        jwtSecret,
         callbackUrl,
       },
       async (accessToken, refreshToken, profile, done) => {

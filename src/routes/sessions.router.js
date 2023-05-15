@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { userModel } from "../dao/models/userModel.js";
-import { createHash, isValidPassword } from "../utils.js";
+import UserManager from "../dao/dbManagers/userManager.js";
+import { isValidPassword } from "../utils.js";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+import config from "../config.js";
 
 const router = Router();
+const userManager = new UserManager();
 
 router.post(
   "/register",
@@ -18,35 +21,36 @@ router.get("/failRegister", (req, res) => {
   return res.send({ status: "error", error: "Register error" });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("login", { failureRegister: "/failLogin" }),
-  async (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).send({ status: "error", error: "Unauthorized" });
-    }
+router.post("/login", async (req, res, next) => {
+  const { email, password } = req.body;
 
-    req.session.user = {
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      age: req.user.age,
-      email: req.user.email,
-      cart: req.user.cart,
-      rol: req.user.rol,
-    };
-    res.send({ status: "Success", payload: req.user });
-  }
-);
+  const user = await userManager.getUser({ email });
 
-router.get("/failLogin", (req, res) => {
-  res.send({ status: "error", error: "Failed login" });
+  if (!user)
+    return res.status(401).send({ status: "error", error: "Unauthorized" });
+
+  if (!isValidPassword(user, password))
+    return res.status(401).send({ status: "error", error: "Unauthorized" });
+
+  const jwtUser = {
+    name: `${user.first_name} ${user.last_name}`,
+    email: user.email,
+    age: user.age,
+    cart: user.cart,
+    rol: user.rol,
+  };
+
+  const token = jwt.sign(jwtUser, config.jwtSecret, { expiresIn: "1m" });
+
+  res
+    .cookie("jwtCookie", token, { httpOnly: true })
+    .send({ status: "Success", message: "Login successful" });
 });
 
-router.get("/current", (req, res) => {
-  if (!req.session.user)
-    res.send({ status: "No user logged" });
+router.get("/current", passport.authenticate("jwt", { session: false }), (req, res) => {
+  if (!req.user) res.send({ status: "No user logged" });
 
-  res.send({ status: "User logged", payload: req.session.user });
+  res.send({ status: "User logged", payload: req.user });
 });
 
 router.get(
@@ -65,19 +69,10 @@ router.get(
 );
 
 router.get("/logout", async (req, res) => {
-  try {
-    req.session.user = null;
-    req.session.save(function (err) {
-      if (err) next(err);
-
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-        res.redirect("/");
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  return res
+    .clearCookie("jwtCookie")
+    // .send({ status: "sucess", message: "log out sucessful" })
+    .redirect("/login");
 });
 
 export default router;

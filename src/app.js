@@ -1,11 +1,9 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import session from "express-session";
-import MongoStore from "connect-mongo";
 import socket from "./socket.js";
 import database from "./db.js";
-import config from "./config.js";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import passport from "passport";
 import sessionsRouter from "./routes/sessions.router.js";
 import messagesRouter from "./routes/messages.router.js";
@@ -17,27 +15,15 @@ import initializePassport from "./auth/passport.js";
 
 // Inicializacion
 const app = express();
-const { dbUser, dbName, dbPassword, sessionSecret } = config;
 
 // Midlwares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", express.static(`${__dirname}/public`));
 app.use(morgan("dev"));
-app.use(
-  session({
-    store: MongoStore.create({
-      mongoUrl: `mongodb+srv://${dbUser}:${dbPassword}@ecommerce.o3a2yau.mongodb.net/${dbName}?retryWrites=true&w=majority`,
-      ttl: 20,
-    }),
-    resave: false,
-    saveUninitialized: false,
-    secret: sessionSecret,
-  })
-);
+app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Seteo de Handlebars
 app.engine("handlebars", handlebars.engine());
