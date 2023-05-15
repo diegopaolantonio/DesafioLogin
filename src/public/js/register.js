@@ -19,7 +19,7 @@ form.addEventListener("submit", async (e) => {
   if (response.status === 400 || response.status === 500) {
     Swal.fire({
       icon: "error",
-      title: `Datos incompletos`,
+      title: `Datos incompletos o erroneos`,
       confirmButtonText: "Ok",
     }).then((result) => {
       if (result.isConfirmed) {

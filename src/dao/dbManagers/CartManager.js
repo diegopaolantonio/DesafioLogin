@@ -9,7 +9,7 @@ export default class CartManager {
     try {
       const carts = await cartModel.find();
       if (!carts) {
-        return "Get messages error";
+        return "Get cart error";
       } else {
         return carts;
       }

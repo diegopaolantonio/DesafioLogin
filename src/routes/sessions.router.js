@@ -10,7 +10,7 @@ const userManager = new UserManager();
 
 router.post(
   "/register",
-  passport.authenticate("register", { failureRegister: "/failRegister" }),
+  passport.authenticate("register", { session: false, failureRegister: "/api/sessions/failRegister" }),
   async (req, res) => {
     return res.send({ status: "Success", message: "User registered" });
   }
@@ -53,20 +53,20 @@ router.get("/current", passport.authenticate("jwt", { session: false }), (req, r
   res.send({ status: "User logged", payload: req.user });
 });
 
-router.get(
-  "/github",
-  passport.authenticate("githublogin", { scope: ["user:email"] }),
-  (req, res) => {}
-);
+// router.get(
+//   "/github",
+//   passport.authenticate("githublogin", { scope: ["user:email"] }),
+//   (req, res) => {}
+// );
 
-router.get(
-  "/githubcallback",
-  passport.authenticate("githublogin", { failureRedirect: "/login" }),
-  async (req, res) => {
-    req.session.user = req.user;
-    res.redirect("/products");
-  }
-);
+// router.get(
+//   "/githubcallback",
+//   passport.authenticate("githublogin", { failureRedirect: "/login" }),
+//   async (req, res) => {
+//     req.session.user = req.user;
+//     res.redirect("/products");
+//   }
+// );
 
 router.get("/logout", async (req, res) => {
   return res

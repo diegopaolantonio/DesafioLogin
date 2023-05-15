@@ -5,7 +5,7 @@ import { userModel } from "../dao/models/userModel.js";
 import { cartModel } from "../dao/models/cartModel.js"
 import { createHash, isValidPassword } from "../utils.js";
 import { ObjectId } from "mongodb";
-import GitHubStrategy from "passport-github2";
+// import GitHubStrategy from "passport-github2";
 import config from "../config.js";
 
 const LocalStrategy = local.Strategy;
@@ -42,7 +42,7 @@ const initializePassport = () => {
             return done(null, false);
           }
 
-          const userCart = await cartModel.create({});
+          const cart = await cartModel.create({});
 
           const newUser = {
             first_name,
@@ -50,15 +50,15 @@ const initializePassport = () => {
             age,
             email,
             password: createHash(password),
-            cart: userCart._id,
-            rol,
+            cart: cart._id,
+            rol: rol ?? "user",
           };
 
           let result = await userModel.create(newUser);
 
-          return done(null, result);
+          done(null, result);
         } catch (error) {
-          return done("Error when trying to find user:" + error);
+          done(error);
         }
       }
     )
@@ -117,39 +117,39 @@ const initializePassport = () => {
     )
   );
 
-  passport.use(
-    "githublogin",
-    new GitHubStrategy(
-      {
-        clientID,
-        jwtSecret,
-        callbackUrl,
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        try {
-          let user = await userModel.findOne({ email: profile._json.email });
-          if (!user) {
-            let newUser = {
-              first_name: profile._json.name,
-              last_name: "",
-              age: 0,
-              email: profile._json.email,
-              password: "",
-              rol: "user",
-            };
+  // passport.use(
+  //   "githublogin",
+  //   new GitHubStrategy(
+  //     {
+  //       clientID,
+  //       jwtSecret,
+  //       callbackUrl,
+  //     },
+  //     async (accessToken, refreshToken, profile, done) => {
+  //       try {
+  //         let user = await userModel.findOne({ email: profile._json.email });
+  //         if (!user) {
+  //           let newUser = {
+  //             first_name: profile._json.name,
+  //             last_name: "",
+  //             age: 0,
+  //             email: profile._json.email,
+  //             password: "",
+  //             rol: "user",
+  //           };
 
-            let result = await userModel.create(newUser);
+  //           let result = await userModel.create(newUser);
 
-            return done(null, result);
-          }
+  //           return done(null, result);
+  //         }
 
-          return done(null, user);
-        } catch (error) {
-          return done(error);
-        }
-      }
-    )
-  );
+  //         return done(null, user);
+  //       } catch (error) {
+  //         return done(error);
+  //       }
+  //     }
+  //   )
+  // );
 
   passport.serializeUser((user, done) => {
     done(null, user._id);

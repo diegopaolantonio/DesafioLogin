@@ -1,11 +1,11 @@
-function checkSession(req, res, next) {
-  if (!req.session.user) return res.redirect("/login");
-  next();
-}
+// function checkSession(req, res, next) {
+//   if (!req.session.user) return res.redirect("/login");
+//   next();
+// }
 
-function checkLogged(req, res, next) {
-  if (req.session.user) return res.redirect("/products");
-  next();
-}
+// function checkLogged(req, res, next) {
+//   if (req.session.user) return res.redirect("/products");
+//   next();
+// }
 
-export { checkLogged, checkSession };
+// export { checkLogged, checkSession };
