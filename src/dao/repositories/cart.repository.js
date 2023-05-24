@@ -1,13 +1,16 @@
-import { cartModel } from "../models/cartModel.js";
-import { productModel } from "../models/productModel.js";
+import { cartModel } from "../models/cart.model.js";
+import { productModel } from "../models/product.model.js";
 
-export default class CartManager {
-  constructor() {}
+class CartRepository {
+  constructor() {
+    this.cartModel = cartModel;
+    this.productModel = productModel;
+  }
 
   // Funcion para obtener los datos del db
   getCarts = async () => {
     try {
-      const carts = await cartModel.find();
+      const carts = await this.cartModel.find();
       if (!carts) {
         return "Get messages error";
       } else {
@@ -21,7 +24,7 @@ export default class CartManager {
   // Funcion para obtener los datos de un cart especifico por el id
   getCartById = async (cartId) => {
     try {
-      const carts = await cartModel
+      const carts = await this.cartModel
         .find({ _id: cartId })
         .populate("products.product");
       if (!carts) {
@@ -37,7 +40,7 @@ export default class CartManager {
   // Funcion para agregar un cart al db
   addCart = async () => {
     try {
-      const created = await cartModel.create({ products: [] });
+      const created = await this.cartModel.create({ products: [] });
       if (!created) {
         return "Add cart error";
       } else {
@@ -60,11 +63,11 @@ export default class CartManager {
     }
 
     try {
-      const product = await productModel.find({ _id: productId });
+      const product = await this.productModel.find({ _id: productId });
       if (!product) {
         return "Id product not found";
       } else {
-        cartToUpdated = await cartModel.find({ _id: cartId });
+        cartToUpdated = await this.cartModel.find({ _id: cartId });
         if (!cartToUpdated) {
           return "Id cart not found";
         } else {
@@ -97,7 +100,7 @@ export default class CartManager {
             }
           }
 
-          const updatedCart = await cartModel.updateOne(
+          const updatedCart = await this.cartModel.updateOne(
             { _id: cartId },
             { products: elementsToUpdated }
           );
@@ -118,14 +121,14 @@ export default class CartManager {
     let cartToModify;
 
     try {
-      cartToModify = await cartModel.find({ _id: cartId });
+      cartToModify = await this.cartModel.find({ _id: cartId });
       if (!cartToModify) {
         return "Id cart not found";
       } else {
         if (!productsElements) {
           return "No elements to update";
         } else {
-          const modifyCart = await cartModel.updateOne(
+          const modifyCart = await this.cartModel.updateOne(
             { _id: cartId },
             { products: productsElements }
           );
@@ -149,7 +152,7 @@ export default class CartManager {
     let indexEncontrado = -1;
 
     try {
-      cartToModify = await cartModel.find({ _id: cartId });
+      cartToModify = await this.cartModel.find({ _id: cartId });
       if (!cartToModify) {
         return "Id cart not found";
       } else {
@@ -160,7 +163,6 @@ export default class CartManager {
             cartToModify.forEach((element) => {
               elementsToModify = element.products;
               element.products.forEach((element, index) => {
-                console.log(element.product);
                 cartProductsArray[index] = element.product;
               });
             });
@@ -176,7 +178,7 @@ export default class CartManager {
                 return "Product not found in cart";
               } else {
                 elementsToModify[indexEncontrado].quantity = quantity;
-                const modifyCart = await cartModel.updateOne(
+                const modifyCart = await this.cartModel.updateOne(
                   { _id: cartId },
                   { products: elementsToModify }
                 );
@@ -202,12 +204,12 @@ export default class CartManager {
     let updatedProducts = [];
 
     try {
-      cartToUpdated = await cartModel.find({ _id: cartId });
+      cartToUpdated = await this.cartModel.find({ _id: cartId });
       if (!cartToUpdated) {
         return "Id cart not found";
       } else {
         if (!productId) {
-          const updatedCart = await cartModel.updateOne(
+          const updatedCart = await this.cartModel.updateOne(
             { _id: cartId },
             { products: [] }
           );
@@ -220,7 +222,7 @@ export default class CartManager {
           const updatedProducts = elementsToUpdated.filter(
             (element) => element.product != productId
           );
-          const updatedCart = await cartModel.updateOne(
+          const updatedCart = await this.cartModel.updateOne(
             { _id: cartId },
             { products: updatedProducts }
           );
@@ -236,3 +238,5 @@ export default class CartManager {
     }
   };
 }
+
+export const cartRepository = new CartRepository();

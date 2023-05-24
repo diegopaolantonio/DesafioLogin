@@ -1,83 +1,41 @@
 import { Router } from "express";
-import { userModel } from "../dao/models/userModel.js";
-import { createHash, isValidPassword } from "../utils.js";
 import passport from "passport";
+import {
+  postRegister,
+  getFailRegister,
+  postLogin,
+  getFailLogin,
+  getCurrent,
+  getGithub,
+  getGithubCallback,
+  getLogout,
+} from "../controllers/sessions.controller.js";
 
 const router = Router();
 
 router.post(
   "/register",
   passport.authenticate("register", { failureRegister: "/failRegister" }),
-  async (req, res) => {
-    return res.send({ status: "Success", message: "User registered" });
-  }
+  postRegister
 );
-
-router.get("/failRegister", (req, res) => {
-  console.log("Fail register");
-  return res.send({ status: "error", error: "Register error" });
-});
-
+router.get("/failRegister", getFailRegister);
 router.post(
   "/login",
   passport.authenticate("login", { failureRegister: "/failLogin" }),
-  async (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).send({ status: "error", error: "Unauthorized" });
-    }
-
-    req.session.user = {
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      age: req.user.age,
-      email: req.user.email,
-      cart: req.user.cart,
-      rol: req.user.rol,
-    };
-    res.send({ status: "Success", payload: req.user });
-  }
+  postLogin
 );
-
-router.get("/failLogin", (req, res) => {
-  res.send({ status: "error", error: "Failed login" });
-});
-
-router.get("/current", (req, res) => {
-  if (!req.session.user)
-    res.send({ status: "No user logged" });
-
-  res.send({ status: "User logged", payload: req.session.user });
-});
-
+router.get("/failLogin", getFailLogin);
+router.get("/current", getCurrent);
 router.get(
   "/github",
   passport.authenticate("githublogin", { scope: ["user:email"] }),
-  (req, res) => {}
+  getGithub
 );
-
 router.get(
   "/githubcallback",
   passport.authenticate("githublogin", { failureRedirect: "/login" }),
-  async (req, res) => {
-    req.session.user = req.user;
-    res.redirect("/products");
-  }
+  getGithubCallback
 );
-
-router.get("/logout", async (req, res) => {
-  try {
-    req.session.user = null;
-    req.session.save(function (err) {
-      if (err) next(err);
-
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-        res.redirect("/");
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
+router.get("/logout", getLogout);
 
 export default router;

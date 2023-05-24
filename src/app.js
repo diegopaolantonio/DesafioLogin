@@ -17,7 +17,7 @@ import initializePassport from "./auth/passport.js";
 
 // Inicializacion
 const app = express();
-const { dbUser, dbName, dbPassword, sessionSecret } = config;
+const { dbUrl, sessionSecret } = config;
 
 // Midlwares
 app.use(express.json());
@@ -27,7 +27,7 @@ app.use(morgan("dev"));
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl: `mongodb+srv://${dbUser}:${dbPassword}@ecommerce.o3a2yau.mongodb.net/${dbName}?retryWrites=true&w=majority`,
+      mongoUrl: `${dbUrl}`,
       ttl: 20,
     }),
     resave: false,

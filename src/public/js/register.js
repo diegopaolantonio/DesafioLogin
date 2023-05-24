@@ -42,8 +42,6 @@ form.addEventListener("submit", async (e) => {
 
   result = await response.json();
 
-  console.log(result.status);
-
   if (result.status === "Success") {
     Swal.fire({
       icon: "success",

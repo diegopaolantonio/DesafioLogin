@@ -1,7 +1,9 @@
-import { productModel } from "../models/productModel.js";
+import { productModel } from "../models/product.model.js";
 
-export default class ProductManager {
-  constructor() {}
+class ProductRepository {
+  constructor() {
+    this.productModel = productModel;
+  }
 
   //Funcion para obtener todos los datos del db
   getProducts = async (limit, page, query, sort) => {
@@ -15,18 +17,18 @@ export default class ProductManager {
       }
       if (!sort) {
         if (!query) {
-          products = await productModel.paginate(
+          products = await this.productModel.paginate(
             {},
             { limit: limit, page: page }
           );
         } else {
           if (query === "true" || query === "false") {
-            products = await productModel.paginate(
+            products = await this.productModel.paginate(
               { status: query },
               { limit: limit, page: page }
             );
           } else {
-            products = await productModel.paginate(
+            products = await this.productModel.paginate(
               { category: query },
               { limit: limit, page: page }
             );
@@ -34,18 +36,18 @@ export default class ProductManager {
         }
       } else {
         if (!query) {
-          products = await productModel.paginate(
+          products = await this.productModel.paginate(
             {},
             { limit: limit, page: page, sort: { price: sort } }
           );
         } else {
           if (query === "true" || query === "false") {
-            products = await productModel.paginate(
+            products = await this.productModel.paginate(
               { status: query },
               { limit: limit, page: page, sort: { price: sort } }
             );
           } else {
-            products = await productModel.paginate(
+            products = await this.productModel.paginate(
               { category: query },
               { limit: limit, page: page, sort: { price: sort } }
             );
@@ -61,7 +63,7 @@ export default class ProductManager {
   // Funcion para obtener un product especifico por el id
   getProductById = async (productId) => {
     try {
-      const products = await productModel.find({ _id: productId });
+      const products = await this.productModel.find({ _id: productId });
       if (!products) {
         return "Id not found";
       } else {
@@ -78,7 +80,7 @@ export default class ProductManager {
       product.status = true;
     }
     try {
-      const createdProduct = await productModel.create(product);
+      const createdProduct = await this.productModel.create(product);
       if (!createdProduct) {
         return "Add product error";
       } else {
@@ -92,7 +94,10 @@ export default class ProductManager {
   // Funcion para actualizar un product por el id en el db
   updateProduct = async (productId, product) => {
     try {
-      const updated = await productModel.updateOne({ _id: productId }, product);
+      const updated = await this.productModel.updateOne(
+        { _id: productId },
+        product
+      );
       if (!updated) {
         return "Update product error";
       } else {
@@ -106,7 +111,7 @@ export default class ProductManager {
   // Funcion para eliminar un product por el id en el db
   deleteProduct = async (productId) => {
     try {
-      const eliminado = await productModel.deleteOne({ _id: productId });
+      const eliminado = await this.productModel.deleteOne({ _id: productId });
       if (!eliminado) {
         return "Delete product error";
       } else {
@@ -117,3 +122,5 @@ export default class ProductManager {
     }
   };
 }
+
+export const productRepository = new ProductRepository();

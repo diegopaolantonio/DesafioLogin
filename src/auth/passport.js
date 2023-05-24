@@ -1,7 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
-import { userModel } from "../dao/models/userModel.js";
-import { cartModel } from "../dao/models/cartModel.js"
+import { userService } from "../dao/services/users.service.js";
+import { cartService } from "../dao/services/carts.service.js";
 import { createHash, isValidPassword } from "../utils.js";
 import { ObjectId } from "mongodb";
 import GitHubStrategy from "passport-github2";
@@ -9,7 +9,8 @@ import config from "../config.js";
 
 const LocalStrategy = local.Strategy;
 
-const { adminEmail, adminPassword, clientID, clientSecret, callbackUrl } = config;
+const { adminEmail, adminPassword, clientID, clientSecret, callbackUrl } =
+  config;
 
 const initializePassport = () => {
   passport.use(
@@ -20,13 +21,13 @@ const initializePassport = () => {
         try {
           const { first_name, last_name, age, email, rol } = req.body;
 
-          let user = await userModel.findOne({ email: username });
+          let user = await userService.getUserByEmail({ email: username });
           if (user) {
             console.log("User already exists");
             return done(null, false);
           }
 
-          const userCart = await cartModel.create({});
+          const userCart = await cartService.createCart();
 
           const newUser = {
             first_name,
@@ -38,7 +39,7 @@ const initializePassport = () => {
             rol,
           };
 
-          let result = await userModel.create(newUser);
+          let result = await userService.createUser(newUser);
 
           return done(null, result);
         } catch (error) {
@@ -73,7 +74,7 @@ const initializePassport = () => {
               };
             }
           } else {
-            user = await userModel.findOne({ email: username });
+            user = await userService.getUserByEmail({ email: username });
             if (!user) {
               return done(null, false);
             }
@@ -100,7 +101,9 @@ const initializePassport = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          let user = await userModel.findOne({ email: profile._json.email });
+          let user = await userService.getUserByEmail({
+            email: profile._json.email,
+          });
           if (!user) {
             let newUser = {
               first_name: profile._json.name,
@@ -111,7 +114,7 @@ const initializePassport = () => {
               rol: "user",
             };
 
-            let result = await userModel.create(newUser);
+            let result = await userService.createUser(newUser);
 
             return done(null, result);
           }
@@ -129,7 +132,7 @@ const initializePassport = () => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    let user = await userModel.findById(id);
+    let user = await userService.getUserById(id);
     done(null, user);
   });
 };

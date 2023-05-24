@@ -1,14 +1,12 @@
 import mongoose from "mongoose";
 import config from "./config.js";
 
-const { dbUser, dbName, dbPassword } = config;
+const { dbUrl } = config;
 
 const database = {
   connect: async () => {
     try {
-      await mongoose.connect(
-        `mongodb+srv://${dbUser}:${dbPassword}@ecommerce.o3a2yau.mongodb.net/${dbName}?retryWrites=true&w=majority`
-      );
+      await mongoose.connect(dbUrl);
     } catch (error) {
       console.log(error);
     }

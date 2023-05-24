@@ -1,12 +1,14 @@
-import { messageModel } from "../models/messageModel.js";
+import { messageModel } from "../models/message.model.js";
 
-export default class MessageManager {
-  constructor() {}
+class MessageRepository {
+  constructor() {
+    this.messageModel = messageModel;
+  }
 
   //Funcion para obtener todos los datos del db
   getMessages = async () => {
     try {
-      const messages = await messageModel.find();
+      const messages = await this.messageModel.find();
       if (!messages) {
         return "Get messages error";
       } else {
@@ -18,9 +20,9 @@ export default class MessageManager {
   };
 
   // Funcion para agregar un mensaje al db
-  addMessage = async (message) => {
+  createMessage = async (message) => {
     try {
-      const createdMessage = await messageModel.create(message);
+      const createdMessage = await this.messageModel.create(message);
       if (!createdMessage) {
         return "Add messages error";
       } else {
@@ -31,3 +33,5 @@ export default class MessageManager {
     }
   };
 }
+
+export const messageRepository = new MessageRepository();
