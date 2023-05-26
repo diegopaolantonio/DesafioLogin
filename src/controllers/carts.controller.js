@@ -1,4 +1,4 @@
-import { cartService } from "../dao/services/carts.service.js";
+import { cartService } from "../services/carts.service.js";
 import { responder } from "../traits/Responder.js";
 
 export async function getCarts(req, res) {

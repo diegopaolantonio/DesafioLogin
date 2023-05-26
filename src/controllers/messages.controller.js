@@ -1,4 +1,4 @@
-import { messageService } from "../dao/services/messages.service.js";
+import { messageService } from "../services/messages.service.js";
 import { responder } from "../traits/Responder.js";
 
 export async function getMessages(req, res) {

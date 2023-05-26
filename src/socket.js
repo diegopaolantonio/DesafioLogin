@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { productRepository } from "./dao/repositories/product.repository.js";
-import { messageRepository } from "./dao/repositories/message.repository.js";
+import { productRepository } from "./repositories/product.repository.js";
+import { messageRepository } from "./repositories/message.repository.js";
 
 const socket = {};
 let products;

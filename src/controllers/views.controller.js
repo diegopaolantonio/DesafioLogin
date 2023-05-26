@@ -1,6 +1,6 @@
-import { cartService } from "../dao/services/carts.service.js";
-import { productService } from "../dao/services/products.service.js";
-import { messageService } from "../dao/services/messages.service.js";
+import { cartService } from "../services/carts.service.js";
+import { productService } from "../services/products.service.js";
+import { messageService } from "../services/messages.service.js";
 import { responder } from "../traits/Responder.js";
 
 export function getLogin(req, res) {

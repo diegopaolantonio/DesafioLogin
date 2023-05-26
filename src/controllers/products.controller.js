@@ -1,4 +1,4 @@
-import { productService } from "../dao/services/products.service.js";
+import { productService } from "../services/products.service.js";
 import { responder } from "../traits/Responder.js";
 
 export async function getProducts(req, res) {

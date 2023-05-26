@@ -1,7 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
-import { userService } from "../dao/services/users.service.js";
-import { cartService } from "../dao/services/carts.service.js";
+import { userService } from "../services/users.service.js";
+import { cartService } from "../services/carts.service.js";
 import { createHash, isValidPassword } from "../utils.js";
 import { ObjectId } from "mongodb";
 import GitHubStrategy from "passport-github2";
