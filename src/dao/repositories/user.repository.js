@@ -11,7 +11,7 @@ class UserRepository {
       const user = await this.userModel.findOne(email);
       return user;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -25,7 +25,7 @@ class UserRepository {
         return user;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -39,7 +39,7 @@ class UserRepository {
         return createdUser;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }

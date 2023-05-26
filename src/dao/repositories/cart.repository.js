@@ -17,7 +17,7 @@ class CartRepository {
         return carts;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -33,7 +33,7 @@ class CartRepository {
         return carts;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -47,7 +47,7 @@ class CartRepository {
         return created;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -112,7 +112,7 @@ class CartRepository {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -140,7 +140,7 @@ class CartRepository {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -193,7 +193,7 @@ class CartRepository {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -234,7 +234,7 @@ class CartRepository {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }

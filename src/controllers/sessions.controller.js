@@ -1,23 +1,25 @@
+import { responder } from "../traits/Responder.js";
+
 export async function postRegister(req, res) {
   try {
     return res.send({ status: "Success", message: "User registered" });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
 export async function getFailRegister(req, res) {
   try {
-    return res.send({ status: "error", error: "Register error" });
+    return responder.errorResponse(res, products.error = "Register error", 400);
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
 export async function postLogin(req, res) {
   try {
     if (!req.user) {
-      return res.status(401).send({ status: "error", error: "Unauthorized" });
+      return responder.errorResponse(res, products.error = "Unauthorized", 401);
     }
     req.session.user = {
       first_name: req.user.first_name,
@@ -27,17 +29,17 @@ export async function postLogin(req, res) {
       cart: req.user.cart,
       rol: req.user.rol,
     };
-    res.send({ status: "Success", payload: req.user });
+    return responder.successResponse(res, req.user);
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
 export async function getFailLogin(req, res) {
   try {
-    res.send({ status: "error", error: "Failed login" });
+    return responder.errorResponse(res, products.error = "Failed login", 400);
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -48,7 +50,7 @@ export async function getCurrent(req, res) {
     }
     res.send({ status: "User logged", payload: req.session.user });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -59,7 +61,7 @@ export async function getGithubCallback(req, res) {
     req.session.user = req.user;
     res.redirect("/products");
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -74,6 +76,6 @@ export async function getLogout(req, res) {
       });
     });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }

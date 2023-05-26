@@ -15,7 +15,7 @@ class MessageRepository {
         return messages;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -29,7 +29,7 @@ class MessageRepository {
         return createdMessage;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }

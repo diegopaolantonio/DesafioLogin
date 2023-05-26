@@ -1,12 +1,13 @@
 import { cartService } from "../dao/services/carts.service.js";
 import { productService } from "../dao/services/products.service.js";
 import { messageService } from "../dao/services/messages.service.js";
+import { responder } from "../traits/Responder.js";
 
 export function getLogin(req, res) {
   try {
     res.render("login");
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -14,7 +15,7 @@ export function getRegister(req, res) {
   try {
     res.render("register");
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -22,7 +23,7 @@ export function getProfile(req, res) {
   try {
     res.render("profile", { user: req.session.user });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -101,7 +102,7 @@ export async function getProducts(req, res) {
       nextLink: nextLink,
     });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -145,7 +146,7 @@ export async function getProductById(req, res) {
       thumbnail: thumbnail,
     });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -197,7 +198,7 @@ export async function getCartById(req, res) {
       cartId: cartId,
     });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -208,14 +209,12 @@ export async function updateCart(req, res) {
 
     const carts = await cartService.updateCart(cid, pid);
     if (!carts) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Add product in cart error" });
+      return responder.errorResponse(res, products.error = "Add product in cart error", 400);
     } else {
       return res.redirect("back");
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -232,7 +231,7 @@ export async function getMessages(req, res) {
       messagesArray: messageArray,
     });
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -240,7 +239,7 @@ export function realTimeProducts(req, res) {
   try {
     res.render("realTimeProducts", {});
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -248,6 +247,6 @@ export function realTimeChat(req, res) {
   try {
     res.render("realTimeChat", {});
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }

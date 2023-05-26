@@ -1,17 +1,16 @@
 import { messageService } from "../dao/services/messages.service.js";
+import { responder } from "../traits/Responder.js";
 
 export async function getMessages(req, res) {
   try {
     const messages = await messageService.getMessages();
-    if (!messages) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Get collection error" });
+    if (messages && messages.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
-      return res.send({ messages });
+      return responder.successResponse(res, messages);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -19,14 +18,12 @@ export async function addMessage(req, res) {
   try {
     const message = req.body;
     const messages = await messageService.addMessage(message);
-    if (!messages) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Add message error" });
+    if (messages && messages.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
-      return res.send({ messages });
+      return responder.successResponse(res, messages);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }

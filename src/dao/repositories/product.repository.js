@@ -56,7 +56,7 @@ class ProductRepository {
       }
       return products;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -70,7 +70,7 @@ class ProductRepository {
         return products;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -87,7 +87,7 @@ class ProductRepository {
         return createdProduct;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -104,7 +104,7 @@ class ProductRepository {
         return updated;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -118,7 +118,7 @@ class ProductRepository {
         return eliminado;
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }

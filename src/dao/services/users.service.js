@@ -10,7 +10,7 @@ class UserService {
       const user = await this.userRepository.getUserByEmail(email);
       return user;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -19,7 +19,7 @@ class UserService {
       const user = await this.userRepository.getUserById(id);
       return user;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -28,7 +28,7 @@ class UserService {
       const user = await userRepository.createUser(newUser);
       return user;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }

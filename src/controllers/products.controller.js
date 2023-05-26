@@ -1,14 +1,13 @@
 import { productService } from "../dao/services/products.service.js";
+import { responder } from "../traits/Responder.js";
 
 export async function getProducts(req, res) {
   try {
     const { limit, page, query, sort } = req.query;
     const products = await productService.getProducts(limit, page, query, sort);
 
-    if (!products) {
-      return res
-        .status(400)
-        .send({ status: "Error", error: "Get products error" });
+    if (products && products.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
       const { docs, totalPages, prevPage, nextPage, hasPrevPage, hasNextPage } =
         products;
@@ -48,10 +47,10 @@ export async function getProducts(req, res) {
         prevLink,
         nextLink,
       };
-      return res.send({ status: "Success", payload: products2 });
+      return responder.successResponse(res, products2);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -59,13 +58,13 @@ export async function getProductById(req, res) {
   try {
     const pid = req.params.pid;
     const product = await productService.getProductById(pid);
-    if (!product) {
-      return res.status(400).send({ status: "error", error: "Id not found" });
+    if (product && product.error) {
+      return responder.errorResponse(res, product.error, 400);
     } else {
-      return res.send(product);
+      return responder.successResponse(res, product);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -73,15 +72,13 @@ export async function addProduct(req, res) {
   try {
     const product = req.body;
     const products = await productService.addProduct(product);
-    if (!products) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Add product error" });
+    if (products && products.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
-      return res.send({ products });
+      return responder.successResponse(res, products);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -90,15 +87,13 @@ export async function updateProduct(req, res) {
     const pid = req.params.pid;
     const updateProduct = req.body;
     const products = await productService.updateProduct(pid, updateProduct);
-    if (!products) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Update product error" });
+    if (products && products.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
-      return res.send({ products });
+      return responder.successResponse(res, products);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }
 
@@ -106,14 +101,12 @@ export async function deleteProduct(req, res) {
   try {
     const pid = req.params.pid;
     const products = await productService.deleteProduct(pid);
-    if (!products) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Delete product error" });
+    if (products && products.error) {
+      return responder.errorResponse(res, products.error, 400);
     } else {
-      return res.send({ products });
+      return responder.successResponse(res, products);
     }
   } catch (error) {
-    console.log(error);
+    return responder.errorResponse(res, error.message)
   }
 }

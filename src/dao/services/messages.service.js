@@ -9,9 +9,12 @@ class MessageService {
   getMessages = async () => {
     try {
       const messages = await this.messageRepository.getMessages();
+      if(!messages) {
+        return { error: "Messages collection error" }
+      }
       return messages;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 
@@ -19,9 +22,12 @@ class MessageService {
   addMessage = async (message) => {
     try {
       const createdMessage = await this.messageRepository.createMessage(message);
+      if(!createdMessage) {
+        return { error: "Add message error" }
+      }
       return createdMessage;
     } catch (error) {
-      console.log(error);
+      throw new Error(error);
     }
   };
 }
